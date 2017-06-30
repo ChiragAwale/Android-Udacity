@@ -17,6 +17,7 @@ package com.example.android.pets;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -129,13 +130,19 @@ public class EditorActivity extends AppCompatActivity {
         values.put(PetContract.PetEntry.COLUMN_PET_WEIGHT,weight);
         values.put(PetContract.PetEntry.COLUMN_PET_GENDER,gender);
 
-        PetDbHelper petDbHelper = new PetDbHelper(this);
-        SQLiteDatabase db = petDbHelper.getWritableDatabase();
-        long rowId = db.insert(PetContract.PetEntry.TABLE_NAME,null,values);
-        if(rowId != -1) {
-            Toast.makeText(this, "New pet inserted with ID " + rowId, Toast.LENGTH_SHORT).show();
+
+
+        Uri uri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI,values);
+        // Show a toast message depending on whether or not the insertion was successful
+        if (uri == null) {
+            // If the new content URI is null, then there was an error with insertion.
+            Toast.makeText(this, "Insert failed",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the insertion was successful and we can display a toast.
+            Toast.makeText(this, "Insert Successful",
+                    Toast.LENGTH_SHORT).show();
         }
-        Log.v("Editor Activity", rowId+"");
 
     }
     @Override

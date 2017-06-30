@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.android.pets.data.PetContract;
 import com.example.android.pets.data.PetContract.PetEntry;
 import com.example.android.pets.data.PetDbHelper;
 
@@ -50,11 +52,22 @@ public class CatalogActivity extends AppCompatActivity {
     private void displayDatabaseInfo() {
 
 
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String projection [] = {
+                PetEntry._ID,
+                PetEntry.COLUMN_PET_NAME,
+                PetEntry.COLUMN_PET_BREED,
+                PetEntry.COLUMN_PET_GENDER,
+                PetEntry.COLUMN_PET_WEIGHT
+        };
 
+        Cursor cursor = getContentResolver().query(
+                PetEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
         //Stores the data received from database to cursor object
-        Cursor cursor = db.query(PetEntry.TABLE_NAME,null,null,null,null,null,null);
+        //Cursor cursor = db.query(PetEntry.TABLE_NAME,projection,null,null,null,null,null);
 
         try {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
@@ -113,6 +126,7 @@ public class CatalogActivity extends AppCompatActivity {
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
+                deletePet();
                 // Do nothing for now
                 return true;
         }
@@ -123,15 +137,19 @@ public class CatalogActivity extends AppCompatActivity {
         ContentValues petInfo = new ContentValues();
         petInfo.put(PetEntry.COLUMN_PET_NAME, "Toto");
         petInfo.put(PetEntry.COLUMN_PET_BREED, "Terrier");
-        petInfo.put(PetEntry.COLUMN_PET_GENDER, "Male");
+        petInfo.put(PetEntry.COLUMN_PET_GENDER, 1);
         petInfo.put(PetEntry.COLUMN_PET_WEIGHT, "7 KG");
 
-        // Gets the data repository in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        Uri uri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI,petInfo);
 
 
-         // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(PetEntry.TABLE_NAME, null, petInfo);
-        Log.v("CATALOG ACTIVITY rowid ", newRowId+"" );
+//         // Insert the new row, returning the primary key value of the new row
+//        long newRowId = db.insert(PetEntry.TABLE_NAME, null, petInfo);
+//        Log.v("CATALOG ACTIVITY rowid ", newRowId+"" );
+    }
+    //Deletes all data from database
+    public void deletePet(){
+        getContentResolver().delete(PetEntry.CONTENT_URI,null,null);
+        displayDatabaseInfo();
     }
 }

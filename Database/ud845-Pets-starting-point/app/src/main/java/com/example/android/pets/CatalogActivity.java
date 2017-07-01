@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.pets.data.PetContract;
@@ -52,7 +53,7 @@ public class CatalogActivity extends AppCompatActivity {
     private void displayDatabaseInfo() {
 
 
-        String projection [] = {
+        String projection[] = {
                 PetEntry._ID,
                 PetEntry.COLUMN_PET_NAME,
                 PetEntry.COLUMN_PET_BREED,
@@ -67,39 +68,18 @@ public class CatalogActivity extends AppCompatActivity {
                 null,
                 null);
         //Stores the data received from database to cursor object
-        //Cursor cursor = db.query(PetEntry.TABLE_NAME,projection,null,null,null,null,null);
 
-        try {
-            // Display the number of rows in the Cursor (which reflects the number of rows in the
-            // pets table in the database).
-            TextView displayView = (TextView) findViewById(R.id.text_view_pet);
-            displayView.setText("Number of rows in pets database table: " + cursor.getCount());
-            displayView.append("ID-Name-Breed-Weight-Gender\n");
+        //Find the list view which is to be populated with data
+        ListView listView = (ListView) findViewById(R.id.list_view_pet);
 
-            //Stores column indexes to respective variables for extracting data needed from cursor object
-            int idColumnIndex = cursor.getColumnIndex(PetEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME);
-            int breedColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED);
-            int weightColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT);
-            int genderColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
+        //Setup the adapter to create list items
+        PetCursorAdapter petCursorAdapter = new PetCursorAdapter(this, cursor);
+        //Attach the adapter to list view to populate it with data
+        listView.setAdapter(petCursorAdapter);
 
-            //Extracts needed data from every position in the cursor object and displays it in the screen
-            while(cursor.moveToNext()){
-                int currentID = cursor.getInt(idColumnIndex);
-                String currentName = cursor.getString(nameColumnIndex);
-                String currentBreed = cursor.getString(breedColumnIndex);
-                int currentWeight = cursor.getInt(weightColumnIndex);
-                int currentGender = cursor.getInt(genderColumnIndex);
-                displayView.append(currentID+"-"+currentName+"-"+currentBreed
-                        +"-"+currentWeight+"-"+currentGender+"\n");
-            }
 
-        } finally {
-            // Always close the cursor when you're done reading from it. This releases all its
-            // resources and makes it invalid.
-            cursor.close();
-        }
     }
+
     //When the user comes back to the activity after finishing up adding a pet, this method helps to refresh views
     @Override
     protected void onStart() {
@@ -132,6 +112,7 @@ public class CatalogActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     //Used for inserting a dummy data to the database
     public void insertPet() {
         ContentValues petInfo = new ContentValues();
@@ -140,16 +121,17 @@ public class CatalogActivity extends AppCompatActivity {
         petInfo.put(PetEntry.COLUMN_PET_GENDER, 1);
         petInfo.put(PetEntry.COLUMN_PET_WEIGHT, "7 KG");
 
-        Uri uri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI,petInfo);
+        Uri uri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, petInfo);
 
 
 //         // Insert the new row, returning the primary key value of the new row
 //        long newRowId = db.insert(PetEntry.TABLE_NAME, null, petInfo);
 //        Log.v("CATALOG ACTIVITY rowid ", newRowId+"" );
     }
+
     //Deletes all data from database
-    public void deletePet(){
-        getContentResolver().delete(PetEntry.CONTENT_URI,null,null);
+    public void deletePet() {
+        getContentResolver().delete(PetEntry.CONTENT_URI, null, null);
         displayDatabaseInfo();
     }
 }

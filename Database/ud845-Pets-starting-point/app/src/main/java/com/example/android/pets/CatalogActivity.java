@@ -127,9 +127,6 @@ public class CatalogActivity extends AppCompatActivity {
         Uri uri = getContentResolver().insert(PetContract.PetEntry.CONTENT_URI, petInfo);
 
 
-//         // Insert the new row, returning the primary key value of the new row
-//        long newRowId = db.insert(PetEntry.TABLE_NAME, null, petInfo);
-//        Log.v("CATALOG ACTIVITY rowid ", newRowId+"" );
     }
 
     //Deletes all data from database

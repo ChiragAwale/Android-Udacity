@@ -70,12 +70,15 @@ public class CatalogActivity extends AppCompatActivity {
         //Stores the data received from database to cursor object
 
         //Find the list view which is to be populated with data
-        ListView listView = (ListView) findViewById(R.id.list_view_pet);
+        ListView petListView = (ListView) findViewById(R.id.list_view_pet);
+        // Find and set empty view on the ListView, so that it only shows when the list has 0 items.
+        View emptyView = findViewById(R.id.empty_view);
+        petListView.setEmptyView(emptyView);
 
         //Setup the adapter to create list items
         PetCursorAdapter petCursorAdapter = new PetCursorAdapter(this, cursor);
         //Attach the adapter to list view to populate it with data
-        listView.setAdapter(petCursorAdapter);
+        petListView.setAdapter(petCursorAdapter);
 
 
     }

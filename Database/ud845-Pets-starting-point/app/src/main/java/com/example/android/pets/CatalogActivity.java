@@ -24,13 +24,12 @@ import android.widget.TextView;
 
 import com.example.android.pets.data.PetContract;
 import com.example.android.pets.data.PetContract.PetEntry;
-import com.example.android.pets.data.PetDbHelper;
+
 
 /**
  * Displays list of pets that were entered and stored in the app.
  */
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    PetDbHelper mDbHelper;
     private PetCursorAdapter mAdapter;
     private final String projection[] = {
         PetEntry._ID,
@@ -54,9 +53,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 startActivity(intent);
             }
         });
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        mDbHelper = new PetDbHelper(this);
+
 
         //Find the list view which is to be populated with data
         ListView petListView = (ListView) findViewById(R.id.list_view_pet);
